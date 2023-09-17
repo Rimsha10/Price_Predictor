@@ -53,15 +53,14 @@ user_data = user_report()
 st.write(user_data)
 if st.sidebar.button('Submit'):
 # FUNCTION   
-  print(user_data.values)
   X_scaled_knn=scaler_knn.transform(user_data.values)
   X_scaled_lg=scaler_lg.transform(user_data.values)
-  print(X_scaled_knn)
-  print(X_scaled_lg)
+  #print(X_scaled_knn)
+  #print(X_scaled_lg)
   if algo=='KNN':
     close = model1.predict(X_scaled_knn)
   else:
     close = model2.predict(X_scaled_lg)
   st.header('Predicted Closing price')
   st.subheader(':heavy_dollar_sign:'+str(np.round(close[0], 3)))
-  print(close)
+ #print(close)
