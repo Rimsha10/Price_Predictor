@@ -2,6 +2,7 @@ import streamlit as st
 import pickle
 import pandas as pd
 import numpy as np
+import sklearn
 from sklearn.preprocessing import StandardScaler
 import datetime as dt
 from PIL import Image
@@ -12,9 +13,10 @@ import base64
 
 #image = Image.open('ock.jpg')
 #st.image(image,width=700,use_column_width='never')
-model1= pickle.load(open('best_model.pkl', 'rb'))
+model1= pickle.load(open('knn.pkl', 'rb'))
 model2=pickle.load(open('lg.pkl', 'rb'))
-
+scaler_lg = pickle.load(open('scaler_lg.pkl', 'rb'))
+scaler_knn = pickle.load(open('scaler_knn.pkl', 'rb'))
 
 def user_report():
   Adjusted_Close = st.sidebar.slider('Adjusted Close', 100,1000, 1 )
@@ -44,25 +46,22 @@ def select_algo():
 
 st.title('Stock Price Prediction :chart_with_upwards_trend:')
 st.header('Stock Price Data :clipboard:')
-
 st.sidebar.header(':red[Algorithm] :question:',divider='grey')
 algo=select_algo()
-print(algo)
 st.sidebar.header(':red[Stock Price Data] :clipboard:',divider='grey')
-#image = Image.open('bb.jpg')
-#st.image(image, '')
-
-# FUNCTION
 user_data = user_report()
 st.write(user_data)
-scaler = StandardScaler()
-X_scaled=scaler.fit_transform(user_data.values)
-if algo=='KNN':
-  close = model1.predict(X_scaled)
-else:
-  close = model2.predict(X_scaled)
-st.header('Predicted Closing price')
-
 if st.sidebar.button('Submit'):
-  st.subheader(':heavy_dollar_sign:'+str(np.round(close[0], 2)))
-print(user_data)
+# FUNCTION   
+  print(user_data.values)
+  X_scaled_knn=scaler_knn.transform(user_data.values)
+  X_scaled_lg=scaler_lg.transform(user_data.values)
+  print(X_scaled_knn)
+  print(X_scaled_lg)
+  if algo=='KNN':
+    close = model1.predict(X_scaled_knn)
+  else:
+    close = model2.predict(X_scaled_lg)
+  st.header('Predicted Closing price')
+  st.subheader(':heavy_dollar_sign:'+str(np.round(close[0], 3)))
+  print(close)
